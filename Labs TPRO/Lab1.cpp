@@ -1,5 +1,5 @@
 #define _CRT_SECURE_NO_WARNINGS
-#include<stdio.h>
+/*#include<stdio.h>
 #include<cstdlib>
 #include<string.h>
 #include<conio.h>
@@ -175,4 +175,87 @@ int main()
 		}
 	}
 	return 0;
+}*/
+#include <stdlib.h>
+#include <iostream>
+using namespace std;
+struct Call_tell       //Структура являющаяся звеном списка
+{
+	char firstName[11];
+	char lastName[21];
+	char tell[13];
+	Call_tell *Next, *Prev; //Указатели на адреса следующего и предыдущего элементов списка
+};
+
+struct List   //Создаем тип данных Список
+{
+	Call_tell *Head, *Tail; //Указатели на адреса начала списка и его конца
+
+	List() :Head(NULL), Tail(NULL) {}; //Инициализируем адреса как пустые
+	void Show(); //Функция отображения списка на экране
+};
+
+void EarceList(List* _deleteList) //Деструктор
+{
+	while (_deleteList->Head) //Пока по адресу на начало списка что-то есть 
+	{
+		_deleteList->Tail = _deleteList->Head->Next; //Резервная копия адреса следующего звена списка
+		delete _deleteList->Head; //Очистка памяти от первого звена
+		_deleteList->Head = _deleteList->Tail; //Смена адреса начала на адрес следующего элемента
+	}
+}
+
+void AddList(int x, List* _newItem)
+{
+	Call_tell *temp = new Call_tell; //Выделение памяти под новый элемент структуры
+	temp->Next = NULL;  //Указываем, что изначально по следующему адресу пусто
+	
+	//temp->x = x;//Записываем всю херню сюда
+
+	if (_newItem->Head != NULL) //Если список не пуст
+	{
+		temp->Prev = _newItem->Tail; //Указываем адрес на предыдущий элемент в соотв. поле
+		_newItem->Tail->Next = temp; //Указываем адрес следующего за хвостом элемента
+		_newItem->Tail = temp; //Меняем адрес хвоста
+	}
+	else //Если список пустой
+	{
+		temp->Prev = NULL; //Предыдущий элемент указывает в пустоту
+		_newItem->Head = _newItem->Tail = temp; //Голова=Хвост=тот элемент, что сейчас добавили
+	}
+}
+
+void List::Show()
+{
+	//ВЫВОДИМ СПИСОК С КОНЦА
+	Call_tell *temp = Tail;
+	//Временный указатель на адрес последнего элемента
+	while (temp != NULL) //Пока не встретится пустое значение
+	{
+		//cout << temp->x << " "; //ВыводиМ тут эту херню
+		temp = temp->Prev; //Указываем, что нужен адрес предыдущего элемента
+	}
+	cout << "\n";
+
+	//ВЫВОДИМ СПИСОК С НАЧАЛА
+	temp = Head; //Временно указываем на адрес первого элемента
+	while (temp != NULL) //Пока не встретим пустое значение
+	{
+		cout << temp->x << " "; //Выводим каждое считанное значение на экран
+		temp = temp->Next; //Смена адреса на адрес следующего элемента
+	}
+	cout << "\n";
+}
+
+int main()
+{
+	system("CLS");
+	List lst; //Объявляем переменную, тип которой есть список
+	lst.Add(100); //Добавляем в список элементы
+	lst.Add(200);
+	lst.Add(900);
+	lst.Add(888);
+
+	lst.Show(); //Отображаем список на экране
+	system("PAUSE");
 }
